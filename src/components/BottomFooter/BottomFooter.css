@@ -1,0 +1,22 @@
+.footer {
+    color: red;
+    padding: 20px 0;
+    margin: 20px 0 0 0; /*top-right-bottom-left*/
+    background-color: darkslategrey;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    left: 0;
+}
+
+.sort {
+    background-color: #f1f1f1;
+    width: 10%;
+    min-width: 150px;
+    text-align-last: center;
+    text-align: center;
+    -ms-text-align-last: center;
+    -moz-text-align-last: center;
+    border: 0;
+    font-family: 'Nunito', sans-serif;
+}

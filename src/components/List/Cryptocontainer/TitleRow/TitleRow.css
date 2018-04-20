@@ -1,0 +1,80 @@
+div.firstrow {
+    display: flex;
+    font-family: 'Tahoma', sans-serif;
+
+}
+
+/**
+font-family: 'Catamaran', sans-serif;
+font-family: 'Alegreya Sans SC', sans-serif;
+
+
+font-family: 'Nunito', sans-serif; 600,800
+font-family: 'Raleway', sans-serif; 300,400
+ */
+
+div.up-left {
+    width: 50%;
+    height: 3em;
+    padding-top: 1em;
+    padding-bottom: 0.5em;
+    float: right;
+}
+
+span.up-left {
+    padding-right: 0.3em;
+    font-size: 2em;
+    font-weight: 800;
+    font-family: 'Nunito', sans-serif;
+    float: right;
+}
+
+div.up-right {
+    width: 50%;
+    height: 3em;
+    padding-bottom: 0.5em;
+    line-height: 2.8em;
+    display: flex;
+}
+
+span.up-right {
+    width: 100%;
+    display: table;
+    margin-left: 0.5em;
+    text-align: left;
+    font-weight: 600;
+    font-family: 'Nunito', sans-serif;
+}
+
+button.cancel {
+    background-color: darkblue;
+    height: 1.8em;
+    width: 1.8em;
+    line-height: 1.5em;
+    border: 0 solid transparent;
+    float: right;
+    box-shadow: 0 2px 4px darkgrey;
+}
+
+div.ninety {
+    padding-top: 1em;
+    width: 90%;
+}
+
+div.ten {
+    width: 10%;
+}
+
+div.left {
+    width: 50%;
+}
+
+p.update {
+    font-size: 0.6em;
+    padding-bottom: 1em;
+    margin-top: 0;
+    margin-bottom: 0.3em;
+    color: darkblue;
+    font-family: 'Raleway', sans-serif;
+}
+

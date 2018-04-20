@@ -1,0 +1,19 @@
+div.firstrow {
+    display: flex;
+}
+
+div.left, div.right {
+    width: 50%;
+}
+
+div.right {
+    display: table;
+}
+
+span.left.lower {
+    font-size: 0.8em;
+}
+
+span.right.lower {
+    font-size: 0.8em;
+}

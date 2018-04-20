@@ -1,0 +1,38 @@
+.detail {
+    background-color: white;
+    visibility: hidden;
+    height: 100%;
+    width: 100%;
+}
+
+.detail-item {
+    line-height: 1.2em;
+    width: calc(100% - 2px);
+    padding: 0.8em 0;
+    box-shadow: 0 1px 10px lightgrey;
+}
+
+span.left {
+    margin: 0 0.5em 0 0;
+    float: right;
+    font-family: 'Raleway', sans-serif;
+    font-weight: 400;
+}
+
+span.right {
+    margin: 0 0 0 0.5em;
+    padding-top: -1em;
+    float: left;
+    font-family: 'Raleway', sans-serif;
+    font-weight: 300;
+}
+
+
+/**
+font-family: 'Catamaran', sans-serif;
+font-family: 'Alegreya Sans SC', sans-serif;
+
+
+font-family: 'Nunito', sans-serif; 600,800
+font-family: 'Raleway', sans-serif; 300,400
+ */
