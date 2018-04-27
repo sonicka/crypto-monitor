@@ -215,7 +215,6 @@ class CryptoMonitor extends Component {
     };
 
     render() {
-        console.log(this.state);
         return (
             <div className="crypto-monitor">
                 <TopToolbar allCoins={this.state.options} handleSelect={this.handleSelect}/>
