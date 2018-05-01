@@ -26,7 +26,6 @@ class CryptoCurrency {
 class CryptoMonitor extends Component {
     state = {
         all_coins: new Map(),
-        //shortcuts: [],  // list of shortcuts
         cryptocurrencies: new Map(), // list of actual CC objects, all 30
         selected_currencies: [], // list of CC shortcuts selected from dropdown
         shown_currencies: [], // list of CC objects to show
@@ -35,12 +34,6 @@ class CryptoMonitor extends Component {
         sorted: false,
         descending: false
     };
-
-    componentDidUpdate() {
-        console.log("UPDATED");
-        console.log(this.state);
-        console.log(localStorage);
-    }
 
     componentDidMount() {
         this.fetchCoinList();
@@ -81,7 +74,6 @@ class CryptoMonitor extends Component {
                 all_coins.set(cn, cnn);
             }
         }
-        //this.setState({all_coins: all_coins, options: all_coins, shortcuts: shortcuts});
         this.setState({all_coins: all_coins, options: all_coins});
         this.fetchCurrenciesData(Array.from(all_coins.keys()));
     };
@@ -91,7 +83,7 @@ class CryptoMonitor extends Component {
      */
     fetchCurrenciesData = (coins) => { // coins = list of shortcuts
         if (coins === "") {
-            coins = this.state.selected_currencies;
+            coins = Array.from(this.state.all_coins.keys());
         }
         let cur = coins;
         let curString = "";
@@ -115,7 +107,7 @@ class CryptoMonitor extends Component {
     };
 
     /**
-     * processed obtained data about currencies and transforms them to CryptoCurrency objects
+     * processes obtained data about currencies and transforms them to CryptoCurrency objects
      */
     processCurrencies = (currs) => {
         let shortcuts = Object.keys(currs);
@@ -179,7 +171,7 @@ class CryptoMonitor extends Component {
         options.delete(event.target.value);
         // store chosen currencies to local storage
         localStorage.setItem('chosenCurrencies', selected.toString());
-        this.setState({selected_currencies: selected, options: options, shown_currencies: shown}, console.log(this.state));
+        this.setState({selected_currencies: selected, options: options, shown_currencies: shown});
     };
 
     /**
@@ -240,7 +232,6 @@ class CryptoMonitor extends Component {
                     handleSelect={this.handleSelect}/>
                 <List
                     list={this.state.shown_currencies.length === 0 ? [] : this.state.shown_currencies}
-                    //fetch={() => this.fetchCurrenciesData(this.state.shortcuts)}
                     handleX={this.removeHandler}/>
                 <BottomFooter
                     sort={this.sortByValue}

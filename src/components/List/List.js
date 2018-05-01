@@ -8,7 +8,6 @@ const list = (props) => {
         return <Cryptocontainer
             item={item}
             key={item.id}
-            fetch={props.fetch}
             handleX={() => props.handleX(item.id)}/>
     });
 

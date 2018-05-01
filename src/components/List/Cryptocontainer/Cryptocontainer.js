@@ -7,7 +7,7 @@ import Detail from "./Detail/Detail";
 
 class CryptoContainer extends Component {
     state = {
-        expanded: true,
+        expanded: true
     };
 
     /**
