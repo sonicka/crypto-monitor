@@ -1,6 +1,6 @@
 ## Crypto Monitor App
 
-A simple React app working with CryptoCompare API.
+A simple React app working with [CryptoCompare API](https://www.cryptocompare.com/api/#).
 - fetches data about first 30 most popular cryptocurrencies
 - enables user to choose which ones they want to show
 - basic details are shown when clicked on a shown cryptocurrency
