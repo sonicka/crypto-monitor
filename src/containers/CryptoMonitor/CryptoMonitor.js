@@ -1,4 +1,4 @@
-import React, {Component} from "react";
+import React, {Component} from 'react';
 import axios from 'axios'; // processes http requests
 import List from '../../components/List/List'
 import TopToolbar from '../../components/TopToolbar/TopToolbar'
@@ -26,8 +26,7 @@ class CryptoCurrency {
 class CryptoMonitor extends Component {
     state = {
         all_coins: new Map(),
-        shortcuts: [],  // list of shortcuts
-        cryptocurrencies: new Map(), // list of actual CC objects
+        cryptocurrencies: new Map(), // list of actual CC objects, all 30
         selected_currencies: [], // list of CC shortcuts selected from dropdown
         shown_currencies: [], // list of CC objects to show
         options: new Map(), // [shortcut:name] ->> options in dropdown
@@ -38,7 +37,12 @@ class CryptoMonitor extends Component {
 
     componentDidMount() {
         this.fetchCoinList();
+    //   this.interval = setInterval(() => this.fetchCurrenciesData(""), 10000);
     }
+
+    //componentWillUnmount() {
+    //    clearInterval(this.interval);
+    //}
 
     /**
      * fetches coin list from CryptoCompare API
@@ -58,7 +62,6 @@ class CryptoMonitor extends Component {
      * processes fetched coin data, returns map of pairs shortcut:coin name for first 30 cryptocurrencies
      */
     processCoinData = (coins) => {
-        let shortcuts = [];
         const all_coin_data = coins.data.Data;
         let all_coins = new Map(); // shortcut + name
         let all_shortcuts = Object.keys(all_coin_data); // list of shortcuts (30)
@@ -69,17 +72,19 @@ class CryptoMonitor extends Component {
                 let cn = all_coin_data[all_shortcuts[i]].Symbol;
                 let cnn = all_coin_data[all_shortcuts[i]].CoinName;
                 all_coins.set(cn, cnn);
-                shortcuts.push(cn);
             }
         }
-        this.setState({all_coins: all_coins, options: all_coins, shortcuts: shortcuts});
-        this.fetchCurrenciesData(shortcuts);
+        this.setState({all_coins: all_coins, options: all_coins});
+        this.fetchCurrenciesData(Array.from(all_coins.keys()));
     };
 
     /**
      * fetches data for the first 30 cryptocurrencies
      */
     fetchCurrenciesData = (coins) => { // coins = list of shortcuts
+        if (coins === "") {
+            coins = Array.from(this.state.all_coins.keys());
+        }
         let cur = coins;
         let curString = "";
         let query = 'https://min-api.cryptocompare.com/data/pricemultifull?fsyms=';
@@ -102,7 +107,7 @@ class CryptoMonitor extends Component {
     };
 
     /**
-     * processed obtained data about currencies and transforms them to CryptoCurrency objects
+     * processes obtained data about currencies and transforms them to CryptoCurrency objects
      */
     processCurrencies = (currs) => {
         let shortcuts = Object.keys(currs);
@@ -122,16 +127,19 @@ class CryptoMonitor extends Component {
      * retrieves data from local storage and reflects them as cryptocurrencies shown on the page
      */
     retrieveDataFromLocalStorage = () => {
-        if (localStorage.length === 0) {
+        if (localStorage.length === 0 || localStorage.getItem('chosenCurrencies') === "") {
+            this.setState({shown_currencies: []});
             return;
         }
         if (localStorage.getItem('chosenCurrencies')) {
             let storedCurrencies = localStorage.getItem('chosenCurrencies').split(",");
             let cryptocurrencies = this.state.cryptocurrencies;
+            let updatedOptions = new Map(this.state.options);
             let retrieved = [];
             storedCurrencies.map(item => {
                 if (cryptocurrencies.get(item)) {
                     retrieved.push(cryptocurrencies.get(item));
+                    updatedOptions.delete(item);
                 }
                 return 0;
             });
@@ -142,7 +150,7 @@ class CryptoMonitor extends Component {
                     retrieved.sort((a, b) => a.price < b.price ? -1 : 1);
                 }
             }
-            this.setState({shown_currencies: retrieved});
+            this.setState({shown_currencies: retrieved, options: updatedOptions, selected_currencies: storedCurrencies});
         }
     };
 
@@ -153,12 +161,7 @@ class CryptoMonitor extends Component {
         let all_currs = this.state.cryptocurrencies; // map
         let shown = [...this.state.shown_currencies];
         let options = new Map(this.state.options);
-        let selected;
-        if (this.state.selected_currencies.length > 0) {
-            selected = this.state.selected_currencies;
-        } else {
-            selected = [];
-        }
+        let selected = [...this.state.selected_currencies];
         if (all_currs.get(event.target.value) !== undefined) {
             shown.push(all_currs.get(event.target.value));
         }
@@ -167,7 +170,7 @@ class CryptoMonitor extends Component {
         // remove selected from options
         options.delete(event.target.value);
         // store chosen currencies to local storage
-        localStorage.setItem('chosenCurrencies', selected);
+        localStorage.setItem('chosenCurrencies', selected.toString());
         this.setState({selected_currencies: selected, options: options, shown_currencies: shown});
     };
 
@@ -176,17 +179,22 @@ class CryptoMonitor extends Component {
      */
     removeHandler = (item) => {
         let updatedShownList = [...this.state.shown_currencies];
+        let updatedSelectedList = [...this.state.selected_currencies];
         let updatedOptionList = this.state.options;
         for (let i = 0; i < updatedShownList.length; i++) {
             if (updatedShownList[i].id === item) {
                 updatedOptionList.set(updatedShownList[i].id, updatedShownList[i].name);
                 updatedShownList.splice(i, 1).pop();
+                let index = updatedSelectedList.indexOf(item);
+                if (index > -1) {
+                    updatedSelectedList.splice(index, 1);
+                }
                 break;
             }
         }
         // update local storage entry of chosen currencies
         localStorage.setItem('chosenCurrencies', this.listToString(updatedShownList));
-        this.setState({shown_currencies: updatedShownList, options: updatedOptionList});
+        this.setState({shown_currencies: updatedShownList, selected_currencies: updatedSelectedList, options: updatedOptionList});
     };
 
     /**
@@ -195,10 +203,10 @@ class CryptoMonitor extends Component {
     listToString = (list) => {
         let str = "";
         list.map(item => {
-            str = str.concat(item["shortcut"].toString() + ",")
+            str = str.concat(item["shortcut"].toString() + ",");
             return 0;
         });
-        return str;
+        return str.slice(0, -1);
     };
 
     /**
@@ -207,9 +215,11 @@ class CryptoMonitor extends Component {
     sortByValue = () => {
         let sorted = [...this.state.shown_currencies];
         if (this.state.descending) {
-            sorted.sort((a, b) => a.price < b.price ? -1 : 1);
+            sorted.sort((a, b) => parseFloat(a.price.substr(2).replace(/[^\d\.\-]/g, "")) < parseFloat(b.price.substr(2)
+                .replace(/[^\d\.\-]/g, "")) ? -1 : 1);
         } else {
-            sorted.sort((a, b) => a.price > b.price ? -1 : 1);
+            sorted.sort((a, b) => parseFloat(a.price.substr(2).replace(/[^\d\.\-]/g, "")) > parseFloat(b.price.substr(2)
+                .replace(/[^\d\.\-]/g, "")) ? -1 : 1);
         }
         this.setState(prevState => ({shown_currencies: sorted, sorted: true, descending: !prevState.descending}));
     };
@@ -217,12 +227,15 @@ class CryptoMonitor extends Component {
     render() {
         return (
             <div className="crypto-monitor">
-                <TopToolbar allCoins={this.state.options} handleSelect={this.handleSelect}/>
+                <TopToolbar
+                    allCoins={this.state.options}
+                    handleSelect={this.handleSelect}/>
                 <List
                     list={this.state.shown_currencies.length === 0 ? [] : this.state.shown_currencies}
-                    fetch={() => this.fetchCurrenciesData(this.state.shortcuts)}
                     handleX={this.removeHandler}/>
-                <BottomFooter click={this.sortByValue}/>
+                <BottomFooter
+                    sort={this.sortByValue}
+                    refresh={() => this.fetchCurrenciesData("")}/>
             </div>
         );
     }
