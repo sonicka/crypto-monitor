@@ -17,17 +17,6 @@ class CryptoContainer extends Component {
         this.setState({expanded: !this.state.expanded});
     };
 
-    /**
-     * setting interval for refreshing data (10 s)
-     */
-    componentDidMount() {
-        this.interval = setInterval(this.props.fetch, 10000);
-    }
-
-    componentWillUnmount() {
-        clearInterval(this.interval);
-    }
-
     render() {
         return (
 

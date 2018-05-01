@@ -20,8 +20,8 @@
 
 .select {
     background-color: #f1f1f1;
-    width: 10%;
-    min-width: 150px;
+    width: calc(16% + 16px);
+    min-width: 208px;
     text-align-last: center;
     text-align: center;
     -ms-text-align-last: center;
